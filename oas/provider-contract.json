@@ -20,6 +20,12 @@
         "responses": {
           "200": {
             "description": "A list of products",
+            "headers": {
+              "Content-Type": {
+                "type": "string",
+                "default": "application/json"
+              }
+            },
             "schema": {
               "type": "array",
               "items": {
@@ -50,6 +56,12 @@
         "responses": {
           "200": {
             "description": "A single product",
+            "headers": {
+              "Content-Type": {
+                "type": "string",
+                "default": "application/json"
+              }
+            },
             "schema": {
               "$ref": "#/definitions/Product"
             }
