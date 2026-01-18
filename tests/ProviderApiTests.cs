@@ -23,7 +23,7 @@ public class ProviderApiTests : IDisposable
     {
         _outputHelper = output;
         _providerUri = "http://localhost:9000";
-        _pactServiceUri = "http://localhost:9001";
+        _pactServiceUri = "http://localhost:9002";
 
         _webHost = WebHost.CreateDefaultBuilder()
             .UseUrls(_pactServiceUri)
@@ -55,7 +55,7 @@ public class ProviderApiTests : IDisposable
 
         string providerName = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PACT_PROVIDER_NAME"))
                                 ? Environment.GetEnvironmentVariable("PACT_PROVIDER_NAME")
-                                : "pactflow-example-provider-dotnet";
+                                : "backend-provider";
         IPactVerifier pactVerifier = new PactVerifier(providerName, config);
         string pactUrl = Environment.GetEnvironmentVariable("PACT_URL");
         string pactFile = Environment.GetEnvironmentVariable("PACT_FILE");
@@ -109,11 +109,19 @@ public class ProviderApiTests : IDisposable
             pactVerifier.WithHttpEndpoint(new Uri(_providerUri))
                 .WithPactBrokerSource(new Uri(Environment.GetEnvironmentVariable("PACT_BROKER_BASE_URL")), options =>
                 {
-                    options.ConsumerVersionSelectors(
-                                new ConsumerVersionSelector { DeployedOrReleased = true },
-                                new ConsumerVersionSelector { MainBranch = true },
-                                new ConsumerVersionSelector { MatchingBranch = true }
-                            )
+                    // Only include MatchingBranch selector if provider branch is set
+                    var selectors = new List<ConsumerVersionSelector>
+                    {
+                        new ConsumerVersionSelector { DeployedOrReleased = true },
+                        new ConsumerVersionSelector { MainBranch = true }
+                    };
+                    
+                    if (!string.IsNullOrEmpty(branch))
+                    {
+                        selectors.Add(new ConsumerVersionSelector { MatchingBranch = true });
+                    }
+                    
+                    options.ConsumerVersionSelectors(selectors.ToArray())
                             .ProviderBranch(branch)
                             .PublishResults(!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PACT_BROKER_PUBLISH_VERIFICATION_RESULTS")), version, results =>
                             {

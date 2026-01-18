@@ -32,7 +32,37 @@
           }
         }
       }
-    }    
+    },
+    "/product/{id}": {
+      "get": {
+        "summary": "Get a single product by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "A single product",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
   },
   "definitions": {
     "Product": {
