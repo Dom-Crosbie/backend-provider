@@ -1,0 +1,102 @@
+{
+  "consumer": {
+    "name": "products-consumer"
+  },
+  "provider": {
+    "name": "backend-provider"
+  },
+  "interactions": [
+    {
+      "description": "A GET request to retrieve all products",
+      "request": {
+        "method": "GET",
+        "path": "/v1/products"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": [
+          {
+            "id": "09",
+            "type": "CREDIT_CARD",
+            "name": "Gem Visa",
+            "version": "v1"
+          },
+          {
+            "id": "10",
+            "type": "CREDIT_CARD",
+            "name": "28 Degrees",
+            "version": "v1"
+          }
+        ],
+        "matchingRules": {
+          "$.body": {
+            "min": 1
+          },
+          "$.body[*].id": {
+            "match": "type"
+          },
+          "$.body[*].type": {
+            "match": "type"
+          },
+          "$.body[*].name": {
+            "match": "type"
+          },
+          "$.body[*].version": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A GET request to retrieve a product by ID",
+      "request": {
+        "method": "GET",
+        "path": "/v1/product/10"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "id": "10",
+          "type": "CREDIT_CARD",
+          "name": "28 Degrees",
+          "version": "v1"
+        },
+        "matchingRules": {
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.type": {
+            "match": "type"
+          },
+          "$.body.name": {
+            "match": "type"
+          },
+          "$.body.version": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "A GET request for a non-existent product",
+      "request": {
+        "method": "GET",
+        "path": "/v1/product/999"
+      },
+      "response": {
+        "status": 404
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}
